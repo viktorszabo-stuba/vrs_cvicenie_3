@@ -48,11 +48,30 @@ int main(void)
   /* Enable clock for GPIO port A*/
 
 	//type your code for GPIOA clock enable here:
+  *((volatile uint32_t *) (RCC_BASE_ADDR + 0x00000014U)) |= (uint32_t)(1 << 17);
 
 
   /* GPIOA pin 3 and 4 setup */
 
 	//type your code for GPIOA pins setup here:
+  //Set mode for pin 4
+  GPIOA_MODER_REG &= ~(uint32_t)(0x3 << 8);
+  GPIOA_MODER_REG |= (uint32_t)(1 << 8);
+  //Set mode for pin 3
+  GPIOA_MODER_REG &= ~(uint32_t)(0x3 << 6);
+
+  /*GPIO OTYPER register*/
+  GPIOA_OTYPER_REG &= ~(1 << 4);
+
+  /*GPIO OSPEEDR register*/
+  //Set Low speed for GPIOB pin 4
+  GPIOA_OSPEEDER_REG &= ~(0x3 << 8);
+
+  /*GPIO PUPDR register, reset*/
+  //Set pull up for GPIOB pin 3 (input)
+  GPIOA_PUPDR_REG |= (1 << 6);
+  //Set no pull for GPIOB pin 4
+  GPIOA_PUPDR_REG &= ~(0x3 << 8);
 
 
   while (1)
