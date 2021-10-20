@@ -16,7 +16,7 @@
 
 /* General purpose input output port A macros */
 //GPIOA peripheral base address
-#define	GPIOA_BASE_ADDR			/* Add GPIO A peripheral base address here. */
+#define	GPIOA_BASE_ADDR			(uint32_t)(0x48000000U)
 //MODER register
 #define	GPIOA_MODER_REG			/* Add moder register address here. */
 //OTYPER register
