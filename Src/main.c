@@ -22,6 +22,33 @@
 #include "main.h"
 #include "assignment.h"
 
+uint8_t prev_pin_state = -1;
+uint8_t state_counter = 0;
+
+enum EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples){
+
+	if (prev_pin_state == -1){
+		prev_pin_state = pin_state;
+	}
+	if(pin_state == prev_pin_state){
+		state_counter++;
+		prev_pin_state = pin_state;
+	}
+	else if(pin_state != prev_pin_state){
+		state_counter = 1;
+		prev_pin_state = pin_state;
+	}
+	if(state_counter >= samples){
+		if(pin_state == 1){
+			return RISE;
+		}
+		else if(pin_state == 0){
+			return FALL;
+		}
+	}
+	return NONE;
+}
+
 int main(void)
 {
   /*
@@ -73,27 +100,23 @@ int main(void)
   //Set no pull for GPIOB pin 4
   GPIOA_PUPDR_REG &= ~(0x3 << 8);
 
-
+uint8_t button;
   while (1)
   {
-	  if(BUTTON_GET_STATE)
-	  {
-		  // 0.25s delay
-		  LL_mDelay(250);
-		  LED_ON;
-		  // 0.25s delay
-		  LL_mDelay(250);
-		  LED_OFF;
+	  button = 0;
+	  if(BUTTON_GET_STATE){
+		  button = 1;
 	  }
-	  else
-	  {
-		  // 1s delay
-		  LL_mDelay(1000);
-		  LED_ON;
-		  // 1s delay
-		  LL_mDelay(1000);
-		  LED_OFF;
-	  }
+
+		enum EDGE_TYPE edge =  edgeDetect(button, 5);
+
+		if(edge == FALL){
+			LED_OFF;
+
+		}
+		else if(edge == RISE){
+			LED_ON;
+		}
   }
 
 }
